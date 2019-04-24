@@ -1,4 +1,7 @@
-module.exports={
+var fs=require('fs')
+
+
+module.exports= fs.existsSync('./db.json') ? JSON.parse(fs.readFileSync('./db.json' , 'utf8')) : {
 
     fruits : [
         {
@@ -14,5 +17,9 @@ module.exports={
             username : 'safa',
             password : '123123',
         }
-    ]
+    ],
+
+    setting : {
+        hello : 'hello word'
+    }
 }
