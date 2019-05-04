@@ -1,0 +1,2 @@
+Index="/Users/safa/git/safa-api-server/index.js"
+node "$Index" "$@"
