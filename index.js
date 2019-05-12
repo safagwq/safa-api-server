@@ -30,7 +30,7 @@ else{
         startJsonServer(staticPath)
     }
     else{
-        startStatusServer(rootUrl,true)
+        startStaticServer(rootUrl,true)
     }
 }
 
@@ -44,16 +44,14 @@ function nowStart(){
     })
 }
 
-function startStatusServer(path,isStart){
+function startStaticServer(path,isStart){
     if(!fs.existsSync(path)){
         return
     }
 
     jsonServer
     .use(Express.static(path))
-    .get(fileListParser(path))
-
-    
+    .get('*',fileListParser(path))
 
     if(isStart){
         nowStart()
@@ -64,7 +62,7 @@ function startStatusServer(path,isStart){
 function startJsonServer(){
     const router = JsonServer.router(dbFilePath)
 
-    startStatusServer(staticPath)
+    startStaticServer(staticPath)
 
     jsonServer.use(router)
     nowStart()
@@ -88,10 +86,10 @@ function startServer(){
     }
 
     if(typeof server.static=='string'){
-        startStatusServer(Path.join(rootUrl, server.static))
+        startStaticServer(Path.join(rootUrl, server.static))
     }
     else{
-        startStatusServer(staticPath)
+        startStaticServer(staticPath)
     }
 
     jsonServer
@@ -175,7 +173,7 @@ function getIPv4(){
 
     for(var i=0;i<os.networkInterfaces().en0.length;i++){
         if(os.networkInterfaces().en0[i].family=='IPv4'){
-            IPv4=os.networkInterfaces().en0[i].address;
+            IPv4=os.networkInterfaces().en0[i].address
         }
     }
 
@@ -184,8 +182,8 @@ function getIPv4(){
 
 function fileListParser(path){
     return (req,res,next)=>{
-
-        var pathName = Path.join( path , req.url )
+        var url=decodeURI(req.url)
+        var pathName = Path.join( path , url )
 
         fs.stat(pathName, (err, stats)=>{
             if(err){
@@ -195,18 +193,18 @@ function fileListParser(path){
 
             if(stats.isDirectory()){
                 fs.readdir(pathName,function (err,files){
-                    if(req.url!='/'){
+                    if(url!='/'){
                         files.unshift('../')
                     }
 
                     var fileList=files
                     .map((name)=>{
-                        var fileNameAfter = fs.statSync( Path.join(path , req.url, name) ).isDirectory() ? '/' : ''
+                        var fileNameAfter = fs.statSync( Path.join(path , url, name) ).isDirectory() ? '/' : ''
                         if(name=='../'){
                             fileNameAfter=''
                         }
 
-                        return `<li><a href='${ Path.join(req.url,name) }'>${name}${ fileNameAfter }</a></li>`
+                        return `<li><a href='${ Path.join(url,name) }'>${name}${ fileNameAfter }</a></li>`
                     })
                     .join('\n')
 
@@ -220,7 +218,7 @@ function fileListParser(path){
                         <head>
                             <meta charset='utf-8'/>
                             <meta name='viewport' content='width=device-width,initial-scale=1.0'/>
-                            <title>${ req.url }</title>
+                            <title>${ url }</title>
                             <style>
                                 a{display:block;  padding:10px;  font-size:14px;  }
                                 ul{list-style:none;  padding:0;  margin:0;  }
