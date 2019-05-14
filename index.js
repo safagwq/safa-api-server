@@ -12,6 +12,13 @@ const dbFilePath = Path.join( rootUrl ,'db.json')
 const staticPath = Path.join( rootUrl ,'public')
 const jsonServer = JsonServer.create()
 
+jsonServer.all('*',(req,res,next)=>{
+    res.header('Access-Control-Allow-Origin', '*')
+    res.header('Access-Control-Allow-Headers', 'Content-Type')
+    res.header('Access-Control-Allow-Methods', '*')
+    next()
+})
+
 const args = yargs.option('port', {
     alias: 'p',
     string: true,
