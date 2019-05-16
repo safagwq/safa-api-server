@@ -3,9 +3,13 @@
 
 # 使用之前
 您需要使用
-```alias api-server="~/git/safa-api-server/api-server"```
+```
+alias api-server="~/git/safa-api-server/api-server"
+```
 或者
-```ln -s /Users/safa/git/safa-api-server/api-server /usr/local/bin/api-server``
+```
+ln -s /Users/safa/git/safa-api-server/api-server /usr/local/bin/api-server
+```
 等命令将命令设置为全局模式 , 目前暂未提供npm 全局安装方式 .
 
 
