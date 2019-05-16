@@ -1,5 +1,6 @@
 const fs=require('fs')
 const Path = require('path')
+const net=require('net')
 
 const yargs = require('yargs')
 const JWT = require('jsonwebtoken')
@@ -22,25 +23,32 @@ const { argv } = yargs.option('port', {
 var router
 var JWT_secret
 
-jsonServer.all('*',(req,res,next)=>{
-    res.header('Access-Control-Allow-Origin', '*')
-    res.header('Access-Control-Allow-Headers', 'Content-Type')
-    res.header('Access-Control-Allow-Methods', '*')
-    next()
-})
+portIsOccupied(argv.port)
+.then(()=>{
 
-
-if(fs.existsSync(serverFilePath)){
-    startServer()
-}
-else{
-    if(fs.existsSync(dbFilePath)){
-        startJsonServer(staticPath)
+    jsonServer.all('*',(req,res,next)=>{
+        res.header('Access-Control-Allow-Origin', '*')
+        res.header('Access-Control-Allow-Headers', 'Content-Type')
+        res.header('Access-Control-Allow-Methods', '*')
+        next()
+    })
+    
+    
+    if(fs.existsSync(serverFilePath)){
+        startServer()
     }
     else{
-        startStaticServer(rootUrl,true)
+        if(fs.existsSync(dbFilePath)){
+            startJsonServer(staticPath)
+        }
+        else{
+            startStaticServer(rootUrl,true)
+        }
     }
-}
+})
+.catch(()=>{
+
+})
 
 
 
@@ -214,6 +222,25 @@ function useServerMiddlewaresItem(serverMiddlewaresItemName){
 }
 
 
+
+function portIsOccupied (port){
+    const server=net.createServer().listen(port)
+    return new Promise((resolve,reject)=>{
+        server.on('listening',()=>{
+            server.close()
+            resolve(port)
+        })
+
+        server.on('error',(err)=>{
+            if(err.code==='EADDRINUSE'){
+                console.log(`${port} 端口已经被使用了 , 请更换一个其他端口继续 . `)
+            }else{
+                reject(err)
+            }
+        })
+    })
+
+}
 
 function getIPv4(){
     var os = require('os')    

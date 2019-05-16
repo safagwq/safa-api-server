@@ -1,2 +1,3 @@
-Index="/Users/safa/git/safa-api-server/index.js"
+basepath=$(cd `dirname $0`; pwd)
+Index="$basepath/index.js"
 node "$Index" "$@"
