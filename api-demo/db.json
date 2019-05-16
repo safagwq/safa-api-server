@@ -1,5 +1,5 @@
 {
-  "fruits": [
+  "shops": [
     {
       "id": 1,
       "name": "apple1",
@@ -21,6 +21,26 @@
       "id": 1,
       "username": "safa",
       "password": "123123"
+    },
+    {
+      "username": "asdasd",
+      "password": "11111111",
+      "id": 2
+    },
+    {
+      "username": "asdasd",
+      "password": "11111111",
+      "id": 3
+    },
+    {
+      "username": "asdasd",
+      "password": "11111111",
+      "id": 4
+    },
+    {
+      "username": "asdasd22222222222222",
+      "password": "11111111",
+      "id": 5
     }
   ],
   "setting": {

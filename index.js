@@ -12,6 +12,16 @@ const dbFilePath = Path.join( rootUrl ,'db.json')
 const staticPath = Path.join( rootUrl ,'public')
 const jsonServer = JsonServer.create()
 
+const { argv } = yargs.option('port', {
+    alias: 'p',
+    string: true,
+    default: '3000',
+    describe: "get port number"
+})
+
+var router
+var JWT_secret
+
 jsonServer.all('*',(req,res,next)=>{
     res.header('Access-Control-Allow-Origin', '*')
     res.header('Access-Control-Allow-Headers', 'Content-Type')
@@ -19,15 +29,6 @@ jsonServer.all('*',(req,res,next)=>{
     next()
 })
 
-const args = yargs.option('port', {
-    alias: 'p',
-    string: true,
-    default: '3000',
-    describe: "get port number"
-})
-.argv
-
-var JWT_secret
 
 if(fs.existsSync(serverFilePath)){
     startServer()
@@ -45,9 +46,9 @@ else{
 
 function nowStart(){
 
-    jsonServer.listen(args.port, () => {
-        console.log(rootUrl + ' 运行在  http://localhost:'+args.port)
-        console.log(rootUrl + ' 运行在  http://'+ getIPv4() +':'+args.port+'/\n\n\n\n')
+    jsonServer.listen(argv.port, () => {
+        console.log(rootUrl + ' 运行在  http://localhost:'+argv.port)
+        console.log(rootUrl + ' 运行在  http://'+ getIPv4() +':'+argv.port+'/\n\n\n\n')
     })
 }
 
@@ -67,7 +68,7 @@ function startStaticServer(path,isStart){
 }
 
 function startJsonServer(){
-    const router = JsonServer.router(dbFilePath)
+    router = JsonServer.router(dbFilePath)
 
     startStaticServer(staticPath)
 
@@ -76,21 +77,11 @@ function startJsonServer(){
 }
 
 function startServer(){
-
     const server = require(serverFilePath)
-    const router = JsonServer.router(server.data)
-    const middlewares = JsonServer.defaults()
+    router = JsonServer.router(server.data)
+    const defaults = JsonServer.defaults()
     const login = server.login || _login
-
     JWT_secret = server.JWT_secret || 'JWT'
-
-
-
-    var serverMiddlewares = server.middlewares
-
-    if(typeof serverMiddlewares=='function'){
-        serverMiddlewares = { default : serverMiddlewares }
-    }
 
     if(typeof server.static=='string'){
         startStaticServer(Path.join(rootUrl, server.static))
@@ -100,19 +91,12 @@ function startServer(){
     }
 
     jsonServer
-    .use(middlewares)
+    .use(defaults)
     .use(JsonServer.bodyParser)
     .use(JWT_Parser)
 
-    if(serverMiddlewares.default){
-        jsonServer.use(serverMiddlewares.default)
-    }
-
-    if(serverMiddlewares!=null && typeof serverMiddlewares=='object'){
-        for(let serverMiddlewaresItemName in serverMiddlewares){
-            useServerMiddlewaresItem(serverMiddlewaresItemName)
-        }
-    }
+    setPublicRouters(server.publicRoutes || [] , server.privateRoutes)
+    setMiddlewares(server.middlewares)
 
     jsonServer
     .post('/login',login)
@@ -124,6 +108,62 @@ function startServer(){
     nowStart()
 }
 
+
+function setMiddlewares(serverMiddlewares){
+
+    if(typeof serverMiddlewares=='function'){
+        serverMiddlewares = { default : serverMiddlewares }
+    }
+
+    if(serverMiddlewares && serverMiddlewares.default){
+        jsonServer.use(serverMiddlewares.default)
+    }
+
+    if(serverMiddlewares!=null && typeof serverMiddlewares=='object'){
+        for(let serverMiddlewaresItemName in serverMiddlewares){
+            useServerMiddlewaresItem(serverMiddlewaresItemName)
+        }
+    }
+}
+
+
+function setPublicRouters(publicRoutes , privateRoutes){
+
+    if(publicRoutes.length){
+        publicRoutes.forEach(route => {
+            jsonServer.all(route,(req,res,next)=>{
+                req._isPublicRoutes = true
+                next()
+            })
+        })
+
+        jsonServer.all('*',(req,res,next)=>{
+            if(req._isPublicRoutes || req.JWT_data){
+                next()
+            }
+            else{
+                res.send({
+                    msg : '您需要登录才可以继续访问'
+                })
+            }
+        })
+    }
+    else{
+        privateRoutes.forEach(route => {
+            jsonServer.all(route,(req,res,next)=>{
+                if(req.JWT_data){
+                    next()
+                }
+                else{
+                    res.send({
+                        msg : '您需要登录才可以继续访问'
+                    })
+                }
+            })
+        })
+    }
+
+}
 
 function _login(req,res,next){
     var users = router.db.getState().users
@@ -244,12 +284,17 @@ function fileListParser(path){
 
 
 function JWT_Parser(req,res,next){
-    JWT.verify(req.body.token , JWT_secret, (error,decoded)=>{
+    var token = req.body.token || req.query.token || req.headers['x-access-token']
+    JWT.verify(token , JWT_secret, (error,decoded)=>{
         if(error) {
             req.JWT_error = error
         }
         else{
             req.JWT_data = decoded
+
+            if(req.body.token){
+                delete req.body.token
+            }
         }
         next()
     })

@@ -1,9 +1,9 @@
 var fs=require('fs')
 
-
+var autoSaveTimeout=null
 var data = fs.existsSync('./db.json') ? JSON.parse(fs.readFileSync('./db.json' , 'utf8')) : {
 
-    fruits : [
+    shops : [
         {
             id : 1,
             name : "apple1",
@@ -39,20 +39,22 @@ var data = fs.existsSync('./db.json') ? JSON.parse(fs.readFileSync('./db.json' ,
 // }
 
 function middlewares(req, res, next){
-    console.log(req.JWT_data)
+    if(req.methods=='POST' || req.methods=='PUT' || 'DELETE'){
+        save()
+    }
+
     next()
 }
 
 
 
 function save(){
-    fs.writeFileSync('./db.json', JSON.stringify(data) )
+
+    clearTimeout(autoSaveTimeout)
+    autoSaveTimeout = setTimeout(()=>{
+        fs.writeFileSync('./db.json', JSON.stringify(data,null,2) )
+    },1000)
 }
-
-
-
-
-
 
 
 
@@ -62,8 +64,12 @@ module.exports = {
     // JWT 做token时候的加密私钥
     // JWT_secret : '',
 
-    // 需要登录才可以访问的接口
-    // needLoginRoutes : ['/users'],
+    // 不需要登录就可以访问的接口列表
+    publicRoutes : ['/shops*'],
+
+    // 需要登录才可以访问的接口 , 如果已经设置 publicRoutes , 则忽略这个接口列表
+    // privateRoutes : ['/users*'],
+
 
     // 静态资源文件目录 , 如果没有设置 , 默认使用public , 相对目录
     // static : 'public',

@@ -23,6 +23,8 @@ api-server -p 8080
 # json api服务器 高级版
 在当前目录创建一个```server.js``` , 然后执行```api-server``` , 将会根据 ```server.js``` 的配置运行一个RESTful风格的api服务器 .
 ```server.js``` 需要导出的数据参数如下
+高级版默认支持登录功能 , 需要设置users数组(参考demo) , 
+
 ```
 // 支持 get: , post: , put: , delete: , all:
 // var middlewares={
@@ -37,17 +39,24 @@ api-server -p 8080
 // }
 
 function middlewares(req, res, next){
-    console.log(req.JWT_data)
+    if(req.methods=='POST' || req.methods=='PUT' || 'DELETE'){
+        save()
+    }
+
     next()
 }
+
 
 module.exports = {
 
     // JWT 做token时候的加密私钥
     // JWT_secret : '',
 
-    // 需要登录才可以访问的接口
-    // needLoginRoutes : ['/users'],
+    // 不需要登录就可以访问的接口列表
+    publicRoutes : ['/shops*'],
+
+    // 需要登录才可以访问的接口 , 如果已经设置 publicRoutes , 则忽略这个接口列表
+    // privateRoutes : ['/users*'],
 
     // 静态资源文件目录 , 如果没有设置 , 默认使用public , 相对目录
     // static : 'public',
@@ -61,5 +70,6 @@ module.exports = {
     // 初始化数据 , 一个obj格式的数据作为接口模板
     data,
 }
+
 ```
 
