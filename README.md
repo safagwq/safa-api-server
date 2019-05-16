@@ -16,13 +16,13 @@ api-server -p 8080
 
 # json api服务器
 在当前目录创建一个```db.json``` , 然后执行 ```api-server``` , 将会根据[json-server](https://github.com/typicode/json-server)的方式运行一个RESTful风格的api服务器 .
-如果```db.json```同目录存在```public```目录 , 将会使用public目录开始静态服务器
+如果```db.json```同目录存在```public```目录 , 将会使用```public```目录开始静态服务器
 
 
 
 # json api服务器 高级版
-在当前目录创建一个server.js , 然后执行api-server , 将会根据 server.js 的配置运行一个RESTful风格的api服务器 .
-server.js 需要导出的数据参数如下
+在当前目录创建一个```server.js``` , 然后执行```api-server``` , 将会根据 ```server.js``` 的配置运行一个RESTful风格的api服务器 .
+```server.js``` 需要导出的数据参数如下
 ```
 // 支持 get: , post: , put: , delete: , all:
 // var middlewares={
