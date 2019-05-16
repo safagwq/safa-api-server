@@ -1,6 +1,14 @@
 # web-api-server
 简易的web api服务
 
+# 使用之前
+您需要使用
+```alias api-server="~/git/safa-api-server/api-server"```
+或者
+```ln -s /Users/safa/git/safa-api-server/api-server /usr/local/bin/api-server``
+等命令将命令设置为全局模式 , 目前暂未提供npm 全局安装方式 .
+
+
 # 静态服务器
 进入任何目录 , 执行api-server, 会将这个目录视为静态服务器的根目录 , 默认运行3000端口
 
