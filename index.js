@@ -93,13 +93,13 @@ function startServer(){
     jsonServer
     .use(defaults)
     .use(JsonServer.bodyParser)
+    .post('/login',login)
     .use(JWT_Parser)
 
     setPublicRouters(server.publicRoutes || [] , server.privateRoutes)
     setMiddlewares(server.middlewares)
 
     jsonServer
-    .post('/login',login)
     .use(router)
     .use((req,res,next)=>{
         res.end('没有找到资源 (O_O)? ')
