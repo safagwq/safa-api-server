@@ -98,8 +98,3 @@ module.exports = {
 //     alert()
 //     }
 // };
-
-// let person = new Proxy({}, validator);
-
-// person.age = 100;
-// delete person.age
