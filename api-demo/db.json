@@ -1,0 +1,29 @@
+{
+  "fruits": [
+    {
+      "id": 1,
+      "name": "apple1",
+      "price": 10
+    },
+    {
+      "name": "apple1223234234234222222222222",
+      "price": "1000",
+      "id": 2
+    },
+    {
+      "name": "apple1223234234234222222222222",
+      "price": "100011111111111",
+      "id": 3
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "username": "safa",
+      "password": "123123"
+    }
+  ],
+  "setting": {
+    "hello": "hello word"
+  }
+}
