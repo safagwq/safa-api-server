@@ -7,18 +7,27 @@ const JWT = require('jsonwebtoken')
 const JsonServer = require('json-server')
 const Express = require('express')
 
-const rootUrl=process.cwd()
-const serverFilePath = Path.join( rootUrl ,'server.js')
-const dbFilePath = Path.join( rootUrl ,'db.json')
-const staticPath = Path.join( rootUrl ,'public')
-const jsonServer = JsonServer.create()
-
-const { argv } = yargs.option('port', {
+const { argv } = yargs
+.option('port', {
     alias: 'p',
     string: true,
     default: '3000',
     describe: "get port number"
 })
+.option('dir', {
+    alias: 'd',
+    string: true,
+    default: process.cwd(),
+    describe: "get dir string"
+})
+
+
+
+const rootUrl=argv.dir
+const serverFilePath = Path.join( rootUrl ,'server.js')
+const dbFilePath = Path.join( rootUrl ,'db.json')
+const staticPath = Path.join( rootUrl ,'public')
+const jsonServer = JsonServer.create()
 
 var router
 var JWT_secret

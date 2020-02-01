@@ -1,6 +1,13 @@
 # web-api-server
 简易的web api服务
 
+# 安装
+```
+git clone https://github.com/safagwq/safa-api-server.git
+cd safa-api-server
+npm install
+```
+
 # 使用之前
 您需要使用
 ```
