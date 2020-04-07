@@ -65,7 +65,7 @@ module.exports = {
     // JWT_secret : '',
 
     // 不需要登录就可以访问的接口列表
-    publicRoutes : ['/shops*'],
+    publicRoutes : ['/shops*','/.ws*'],
 
     // 需要登录才可以访问的接口 , 如果已经设置 publicRoutes , 则忽略这个接口列表
     // privateRoutes : ['/users*'],
