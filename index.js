@@ -89,7 +89,13 @@ function startJsonServer(){
 
     startStaticServer(staticPath)
 
-    jsonServer.use(router)
+    JWT_secret = 'JWT'
+
+    jsonServer
+    .use(JsonServer.bodyParser)
+    .post('/login',_login)
+    .use(router)
+
     nowStart()
 }
 

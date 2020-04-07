@@ -42,6 +42,8 @@ api-server -p 8080
 在当前目录创建一个```db.json``` , 然后执行 ```api-server``` , 将会根据[json-server](https://github.com/typicode/json-server)的方式运行一个RESTful风格的api服务器 .
 如果```db.json```同目录存在```public```目录 , 将会使用```public```目录开始静态服务器
 
+如果db.json里有一个"users"的数组 , 那么可以使用这个"users"数组里面的"username"和"password"做登录功能 , 登录时post访问"/login"即可
+
 
 
 # json api服务器 高级版
