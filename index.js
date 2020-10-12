@@ -257,12 +257,15 @@ function portIsOccupied (port){
 
 }
 
+
 function getIPv4(){
     var os = require('os')    
-
-    for(var i=0;i<os.networkInterfaces().en0.length;i++){
-        if(os.networkInterfaces().en0[i].family=='IPv4'){
-            IPv4=os.networkInterfaces().en0[i].address
+    const networks = os.networkInterfaces()
+    const network = networks[Object.keys( networks )[0]]
+    
+    for(var i=0;i<network.length;i++){
+        if(network[i].family=='IPv4'){
+            IPv4=network[i].address
         }
     }
 
